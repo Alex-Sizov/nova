@@ -272,6 +272,8 @@ class API(base.Base):
         # Help us to record host in EventReporter
         self.host = CONF.host
         super(API, self).__init__(**kwargs)
+    def guest_agent_command(self, context, instance, command):
+        return self.compute_rpcapi.guest_agent_command(context, instance, command)
 
     @property
     def cell_type(self):

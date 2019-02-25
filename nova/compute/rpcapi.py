@@ -441,6 +441,12 @@ class ComputeAPI(object):
                               version_cap=version_cap,
                               serializer=serializer,
                               call_monitor_timeout=cmt)
+    def guest_agent_command(self, ctxt, instance, command):
+        version = self._ver(ctxt, '4.0')
+        cctxt = self.router.client(ctxt).prepare(
+                server=_compute_host(None, instance), version=version)
+        return cctxt.call(ctxt, 'guest_agent_command',
+                          instance=instance, command=command)
 
     def add_aggregate_host(self, ctxt, host, aggregate, host_param,
                            slave_info=None):

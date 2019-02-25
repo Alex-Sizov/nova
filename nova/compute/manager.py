@@ -5174,6 +5174,17 @@ class ComputeManager(manager.Manager):
         """Inject network info, but don't return the info."""
         network_info = self.network_api.get_instance_nw_info(context, instance)
         self._inject_network_info(context, instance, network_info)
+    
+    @messaging.expected_exceptions(NotImplementedError,
+                                   exception.InstanceNotFound)
+    @wrap_exception()
+    @wrap_instance_fault
+    def guest_agent_command(self, context, instance, command):
+        """Send command to guest agent"""
+        context = context.elevated()
+        LOG.info("Send guest agent command", instance=instance)
+
+        return self.driver.guest_agent_command(instance, command)
 
     @messaging.expected_exceptions(NotImplementedError,
                                    exception.ConsoleNotAvailable,

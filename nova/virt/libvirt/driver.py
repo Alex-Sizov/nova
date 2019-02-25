@@ -319,6 +319,7 @@ class LibvirtDriver(driver.ComputeDriver):
         if libvirt is None:
             libvirt = importutils.import_module('libvirt')
             libvirt_migrate.libvirt = libvirt
+            libvirt_qemu = importutils.import_module('libvirt_qemu')
 
         self._host = host.Host(self._uri(), read_only,
                                lifecycle_event_handler=self.emit_event,
@@ -331,6 +332,7 @@ class LibvirtDriver(driver.ComputeDriver):
         self.firewall_driver = firewall.load_driver(
             DEFAULT_FIREWALL_DRIVER,
             host=self._host)
+        self.qemuAgentCommand = libvirt_qemu.qemuAgentCommand
 
         self.vif_driver = libvirt_vif.LibvirtGenericVIFDriver()
 
@@ -4675,6 +4677,12 @@ class LibvirtDriver(driver.ComputeDriver):
         if max_vram and video_ram:
             video.vram = video_ram * units.Mi / units.Ki
         guest.add_device(video)
+    
+    def guest_agent_command(self, instance, command):
+        domain = self._host._get_domain(instance)
+        cmd = jsonutils.dumps(command)
+        LOG.info("issued agent command: instance name: %s command: %s", instance.name, command)
+        return self.qemuAgentCommand(domain, cmd, 5, 0)
 
     def _add_qga_device(self, guest, instance):
         qga = vconfig.LibvirtConfigGuestChannel()

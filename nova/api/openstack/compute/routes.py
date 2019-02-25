@@ -780,6 +780,9 @@ ROUTE_LIST = (
     ('/servers/{id}/action', {
         'POST': [server_controller, 'action']
     }),
+    ('/servers/{id}/guest-agent-command', {
+        'POST': [server_controller, 'guest_agent_command']
+    }),
     ('/servers/{server_id}/consoles', {
         'GET': [consoles_controller, 'index'],
         'POST': [consoles_controller, 'create']

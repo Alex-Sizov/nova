@@ -386,6 +386,12 @@ class ServersController(wsgi.Controller):
         context.can(server_policies.SERVERS % 'show')
         instance = self._get_server(context, req, id, is_detail=True)
         return self._view_builder.show(req, instance)
+    
+    def guest_agent_command(self, req, id, body):
+        context = req.environ['nova.context']
+        command = body['cmd']
+        instance = self._get_server(context, req, id, is_detail=True)
+        return self.compute_api.guest_agent_command(context, instance, command)
 
     @wsgi.response(202)
     @wsgi.expected_errors((400, 403, 409))
