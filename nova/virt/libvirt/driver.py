@@ -4682,7 +4682,10 @@ class LibvirtDriver(driver.ComputeDriver):
         domain = self._host._get_domain(instance)
         cmd = jsonutils.dumps(command)
         LOG.info("issued agent command: instance name: %s command: %s", instance.name, command)
-        return self.qemuAgentCommand(domain, cmd, 5, 0)
+        return_cmd = {
+           'cmd': jsonutils.loads(self.qemuAgentCommand(domain, cmd, 5, 0))
+        }
+        return return_cmd
 
     def _add_qga_device(self, guest, instance):
         qga = vconfig.LibvirtConfigGuestChannel()
